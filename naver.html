@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NAVER TASK — 천우태 포트폴리오</title>
-<meta name="description" content="네이버 과제">
-<meta name="theme-color" content="#000000">
-<meta name="robots" content="noindex">
+<meta name="description" content="네이버지도 과제 영상">
+<meta name="theme-color" content="#0d1014">
+<meta property="og:title" content="NAVER TASK — 천우태">
+<meta property="og:description" content="네이버지도 과제 영상">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="detail soon">
+<body class="detail ig">
 
 <a class="btn back" href="index.html" data-transition aria-label="홈으로 돌아가기">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
@@ -20,7 +21,53 @@
   HOME
 </a>
 
-<p class="soon"><b>NAVER TASK</b>준비 중입니다</p>
+<div class="ig-frame">
+  <img class="ig-bg" src="assets/img/naver-bg.webp" width="3418" height="1980"
+       alt="인스타그램에 올라온 네이버지도 게시물 화면" decoding="async" fetchpriority="high">
+
+  <div class="ig-player" id="igPlayer">
+    <video class="ig-film" id="igFilm"
+           src="assets/video/naver.mp4"
+           poster="assets/img/naver-poster.webp"
+           width="1080" height="1350"
+           preload="metadata" playsinline
+           controlslist="nodownload" disablepictureinpicture
+           aria-label="네이버지도 과제 영상"></video>
+
+    <!-- 재생 버튼 — 눌리면 그 자리에서 바로 돈다 -->
+    <button class="ig-play" id="igPlay" type="button" aria-label="영상 재생">
+      <span class="ig-badge">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+    </button>
+
+    <!-- 소리 — 인스타그램처럼 오른쪽 아래 -->
+    <button class="ig-sound" id="igSound" type="button" aria-label="소리 끄기" aria-pressed="true">
+      <svg class="ig-sound__on" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 9v6h4l5 4V5L8 9H4z"/>
+        <path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <svg class="ig-sound__off" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 9v6h4l5 4V5L8 9H4z"/>
+        <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <!-- 다 돌고 나면 아래에서 올라온다 -->
+    <div class="ig-end" id="igEnd">
+      <button class="btn ig-fs" id="igFs" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/>
+        </svg>
+        전체화면으로 보기
+      </button>
+      <button class="ig-again" id="igReplay" type="button">다시 재생</button>
+    </div>
+  </div>
+</div>
 
 <div class="fade-layer"></div>
 <script src="assets/js/app.js"></script>
