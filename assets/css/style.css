@@ -738,11 +738,92 @@ body.tube {
 }
 
 /* ═══════════════════════════════════════════
-   썸네일을 눌러 유튜브로 — 가로 넘김 지면 위에 얹는다
+   상단 탭으로 넘기는 지면 — 크로스 디졸브 (youtube.html)
    좌표는 원본(1920×1080) 실측에서 비율로 환산했다.
    ═══════════════════════════════════════════ */
 
-.page--links { display: flex; align-items: center; justify-content: center; }
+body.deck {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.deck {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+/* 겹쳐 쌓아두고 들어오는 장만 위에서 서서히 불투명해진다.
+   나가는 장은 디졸브가 끝날 때까지 불투명한 채로 밑에 깔려 있어
+   도중에 바탕이 비쳐 어두워지는 일이 없다. */
+.sheet-fade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity .55s ease;
+}
+.sheet-fade.is-on    { opacity: 1; z-index: 2; pointer-events: auto; }
+.sheet-fade.is-under { opacity: 1; z-index: 1; pointer-events: none; transition: none; }
+
+.sheet-fade > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  max-width: none;
+  max-height: none;
+}
+
+/* ── 상단 탭 (700×227 / 960×245, y 61, 높이 40) ── */
+.yt-tab {
+  position: absolute;
+  top: 5.6481%;
+  height: 3.7037%;
+  z-index: 5;
+  margin: 0; padding: 0; border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: center center;
+  transition: transform .28s cubic-bezier(.22, .61, .36, 1);
+}
+.yt-tab--long  { left: 36.4583%; width: 11.8229%; }
+.yt-tab--short { left: 50%;      width: 12.7604%; }
+
+/* 올렸을 때 살짝 깔리는 막 — 글자는 그림에 찍혀 있으므로 건드리지 않는다 */
+.yt-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .12);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.yt-tab:hover::before { opacity: 1; }
+.yt-tab:hover  { transform: scale(1.045); }
+.yt-tab:active { transform: scale(.975); transition-duration: .08s; }
+.yt-tab:focus-visible { outline: 2px solid #111; outline-offset: 4px; }
+
+/* 이미 보고 있는 쪽은 눌러도 소용없으니 가만히 둔다 */
+.yt-tab[aria-pressed="true"] { cursor: default; }
+.yt-tab[aria-pressed="true"]:hover { transform: none; }
+.yt-tab[aria-pressed="true"]:hover::before { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .yt-tab:hover, .yt-tab:active { transform: none; }
+}
+
+/* ═══════════════════════════════════════════
+   썸네일을 눌러 유튜브로 — 가로 넘김 지면 위에 얹는다
+   좌표는 원본(1920×1080) 실측에서 비율로 환산했다.
+   ═══════════════════════════════════════════ */
 
 /* 지면 안에서 그림이 실제로 차지하는 상자.
    object-fit의 여백까지 포함한 .page를 기준 삼으면 좌표가 틀어지므로,
@@ -765,24 +846,24 @@ body.tube {
 
 /* 1장 — 롱폼 네 칸 (714×407, 좌 214 / 우 960, 상 137 / 하 575) */
 .tile--long {
-  width: 37.1875%;
-  height: 37.6852%;
+  width: 37.2917%;
+  height: 37.7778%;
   border-radius: 3.4% / 5.9%;
 }
-.ln-1 { left: 11.1458%; top: 12.6852%; }
-.ln-2 { left: 50%;      top: 12.6852%; }
-.ln-3 { left: 11.1458%; top: 53.2407%; }
-.ln-4 { left: 50%;      top: 53.2407%; }
+.ln-1 { left: 11.0938%; top: 12.6852%; }
+.ln-2 { left: 49.9479%; top: 12.6852%; }
+.ln-3 { left: 11.0938%; top: 53.2407%; }
+.ln-4 { left: 49.9479%; top: 53.2407%; }
 
 /* 2장 — 숏폼 세 칸 (y 149, h 786) */
 .tile--short {
   top: 13.7963%;
-  height: 72.7778%;
+  height: 72.8704%;
   border-radius: 4.6% / 3.1%;
 }
-.sh-1 { left:  6.8229%; width: 27.0833%; }
-.sh-2 { left: 35.5729%; width: 27.1354%; }
-.sh-3 { left: 64.3229%; width: 27.2917%; }
+.sh-1 { left:  6.7708%; width: 27.1875%; }
+.sh-2 { left: 35.5208%; width: 27.2396%; }
+.sh-3 { left: 64.2708%; width: 27.3958%; }
 
 /* 얹히는 막 — 평소엔 없다가 올리면 살짝 깔린다 */
 .tile__veil {
@@ -841,181 +922,6 @@ body.tube {
 @media (prefers-reduced-motion: reduce) {
   .tile:hover, .tile:focus-visible, .tile:active { transform: none; }
   .tile:hover .tile__badge, .tile:focus-visible .tile__badge { transform: translate(-50%, -50%); }
-}
-
-/* ═══════════════════════════════════════════
-   인스타그램 게시물 안에서 그대로 도는 영상 (naver.html)
-
-   배경은 실제 게시물 화면을 그대로 쓰되, 영상 자리만 4:5로 다시 짰다.
-   (주신 배경의 자리는 9:16이고 영상은 4:5라, 그대로 얹으면 위아래가
-    검게 비어 버린다. 인스타그램은 영상 비율에 맞춰 칸을 넓히므로
-    같은 방식으로 칸을 넓히고 댓글 칸은 손대지 않고 옮겨 붙였다.)
-   좌표는 배경(3418×1980) 실측: x 894..1852, y 189..1387.
-   ═══════════════════════════════════════════ */
-
-body.ig {
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-  background: #0d1014;          /* 배경 스크린샷의 바탕색과 같은 값 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ig-frame {
-  position: relative;
-  width: min(100%, calc(100dvh * 3418 / 1980));
-  aspect-ratio: 3418 / 1980;
-}
-
-.ig-bg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.ig-player {
-  position: absolute;
-  left:   26.1557%;
-  top:     9.5455%;
-  width:  28.0573%;
-  height: 60.5556%;
-  background: #000;
-  overflow: hidden;
-  line-height: 0;
-  container-type: size;         /* 안에 놓인 것들이 이 칸 크기를 따라간다 */
-}
-
-.ig-film {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;             /* 칸과 영상의 비율 차이가 0.02%다. 잘라내지 않는다 */
-  background: #000;
-}
-
-/* ── 가운데 재생 버튼 ── */
-.ig-play {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0; padding: 0; border: 0;
-  background: transparent;
-  cursor: pointer;
-  transition: opacity .3s ease, background .3s ease;
-}
-.ig-play:hover { background: rgba(0, 0, 0, .22); }
-.ig-play:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
-
-.ig-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 54px; height: 54px;
-  width: 18cqw; height: 18cqw;
-  border: 1px solid rgba(255, 255, 255, .88);
-  border-radius: 50%;
-  background: rgba(0, 0, 0, .5);
-  -webkit-backdrop-filter: blur(8px);
-          backdrop-filter: blur(8px);
-  transition: transform .35s cubic-bezier(.22, .61, .36, 1), background .3s ease;
-}
-.ig-play:hover .ig-badge { transform: scale(1.08); background: rgba(0, 0, 0, .7); }
-.ig-badge svg { width: 38%; height: 38%; margin-left: 7%; fill: #fff; }
-
-/* 재생 중에는 숨는다 */
-.ig-player.is-playing .ig-play { opacity: 0; pointer-events: none; }
-.ig-player.is-ended   .ig-play { opacity: 0; pointer-events: none; }
-
-/* ── 소리 — 오른쪽 아래 ── */
-.ig-sound {
-  position: absolute;
-  right: 4.4%;
-  bottom: 3.2%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px; height: 34px;
-  width: 11cqw; height: 11cqw;
-  margin: 0; padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, .55);
-  -webkit-backdrop-filter: blur(6px);
-          backdrop-filter: blur(6px);
-  color: #fff;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .3s ease, background .25s ease;
-}
-.ig-player.is-playing .ig-sound { opacity: 1; pointer-events: auto; }
-.ig-player.is-ended   .ig-sound { opacity: 0; pointer-events: none; }
-.ig-sound:hover { background: rgba(0, 0, 0, .8); }
-.ig-sound:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.ig-sound svg { width: 52%; height: 52%; fill: #fff; }
-.ig-sound .ig-sound__off { display: none; }
-.ig-sound.is-muted .ig-sound__on  { display: none; }
-.ig-sound.is-muted .ig-sound__off { display: block; }
-
-/* ── 다 돌고 나면 아래에서 올라오는 칸 ── */
-.ig-end {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(14px * var(--ui, 1));
-  padding: calc(44px * var(--ui, 1)) 6% calc(30px * var(--ui, 1));
-  background: linear-gradient(to top,
-              rgba(0, 0, 0, .88), rgba(0, 0, 0, .62) 52%, rgba(0, 0, 0, 0));
-  line-height: 1;
-  opacity: 0;
-  transform: translateY(22%);
-  pointer-events: none;
-  transition: opacity .42s ease, transform .52s cubic-bezier(.22, .61, .36, 1);
-}
-.ig-player.is-ended .ig-end { opacity: 1; transform: none; pointer-events: auto; }
-
-.ig-fs { max-width: 100%; }
-
-.ig-again {
-  margin: 0; padding: calc(4px * var(--ui, 1)) calc(6px * var(--ui, 1));
-  border: 0;
-  background: transparent;
-  color: rgba(255, 255, 255, .62);
-  font-family: inherit;
-  font-size: calc(19px * var(--ui, 1));
-  font-weight: 300;
-  letter-spacing: .02em;
-  cursor: pointer;
-  transition: color .22s ease;
-}
-.ig-again:hover { color: #fff; }
-.ig-again:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-
-/* ── 전체화면 ── */
-.ig-player:fullscreen {
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  container-type: normal;
-}
-.ig-player:fullscreen .ig-film { object-fit: contain; }
-.ig-player:fullscreen .ig-end,
-.ig-player:fullscreen .ig-play,
-.ig-player:fullscreen .ig-sound { display: none; }
-
-.ig-player:-webkit-full-screen { width: 100%; height: 100%; left: 0; top: 0; }
-
-@media (prefers-reduced-motion: reduce) {
-  .ig-end { transform: none; }
-  .ig-play:hover .ig-badge { transform: none; }
 }
 
 /* ═══════════════════════════════════════════

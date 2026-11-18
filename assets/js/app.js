@@ -93,79 +93,6 @@
   }
 
 
-  /* ── 인스타그램 게시물 안에서 도는 영상 (naver.html) ──
-     게시물 화면의 영상 칸을 그대로 쓰고, 다 돌고 나면
-     "전체화면으로 보기"가 아래에서 올라온다. */
-  var igp = document.getElementById('igPlayer');
-  if (igp) {
-    var igFilm   = document.getElementById('igFilm');
-    var igPlay   = document.getElementById('igPlay');
-    var igSound  = document.getElementById('igSound');
-    var igFs     = document.getElementById('igFs');
-    var igReplay = document.getElementById('igReplay');
-
-    function igStart() {
-      igp.classList.remove('is-ended');
-      igp.classList.add('is-playing');
-      var p = igFilm.play();
-      if (p && typeof p.catch === 'function') {
-        p.catch(function () { igp.classList.remove('is-playing'); });
-      }
-    }
-
-    igPlay.addEventListener('click', igStart);
-    igReplay.addEventListener('click', function () { igFilm.currentTime = 0; igStart(); });
-
-    // 영상을 누르면 멈추고, 다시 누르면 이어 돈다
-    igFilm.addEventListener('click', function () {
-      if (igFilm.paused) igStart(); else igFilm.pause();
-    });
-
-    igFilm.addEventListener('play', function () {
-      igp.classList.remove('is-ended');
-      igp.classList.add('is-playing');
-    });
-    igFilm.addEventListener('pause', function () {
-      // 끝나서 멈춘 것은 아래 ended가 맡는다
-      if (igFilm.ended) return;
-      if (igFilm.duration && igFilm.currentTime >= igFilm.duration - 0.08) return;
-      igp.classList.remove('is-playing');
-    });
-    igFilm.addEventListener('ended', function () {
-      igp.classList.remove('is-playing');
-      igp.classList.add('is-ended');
-    });
-
-    igSound.addEventListener('click', function () {
-      igFilm.muted = !igFilm.muted;
-      igSound.classList.toggle('is-muted', igFilm.muted);
-      igSound.setAttribute('aria-pressed', igFilm.muted ? 'false' : 'true');
-      igSound.setAttribute('aria-label', igFilm.muted ? '소리 켜기' : '소리 끄기');
-    });
-
-    function igFsOn() {
-      return document.fullscreenElement === igp ||
-             document.webkitFullscreenElement === igp;
-    }
-
-    igFs.addEventListener('click', function () {
-      var req = igp.requestFullscreen || igp.webkitRequestFullscreen;
-      if (req) {
-        var r = req.call(igp);
-        if (r && typeof r.catch === 'function') { r.catch(function () {}); }
-      } else if (igFilm.webkitEnterFullscreen) {
-        igFilm.webkitEnterFullscreen();     // 아이폰 사파리는 영상만 전체화면이 된다
-      }
-      igFilm.controls = true;
-      igFilm.currentTime = 0;
-      igStart();
-    });
-
-    function igFsChange() { if (!igFsOn()) igFilm.controls = false; }
-    document.addEventListener('fullscreenchange', igFsChange);
-    document.addEventListener('webkitfullscreenchange', igFsChange);
-  }
-
   /* ── 유튜브 영상 페이지 ────────────────────
      유튜브로 넘어가지 않고, 이 페이지 안에서 영상만 받아 재생한다.
      IFrame API를 쓰는 이유는 재생을 우리가 쥐고 있어야 하기 때문이다 —
@@ -300,6 +227,48 @@
       if (!opened && video.readyState < 2) openContent();
     }, 20000);
     video.addEventListener('playing', function () { clearTimeout(guard); }, { once: true });
+  }
+
+  /* ── 상단 탭으로 넘기는 지면 — 크로스 디졸브 (youtube.html) ──
+     나가는 장을 디졸브가 끝날 때까지 불투명한 채로 밑에 깔아 둔다.
+     둘 다 반투명해지는 순간이 없어 도중에 바탕이 비치지 않는다. */
+  var deck = document.getElementById('deck');
+  if (deck) {
+    var sheets = Array.prototype.slice.call(deck.querySelectorAll('[data-sheet]'));
+    var tabs   = Array.prototype.slice.call(deck.querySelectorAll('.yt-tab'));
+    var curSheet = 0;
+    var FADE = 560;
+    var deckTimer = null;
+
+    function showSheet(n) {
+      if (n === curSheet || n < 0 || n >= sheets.length) return;
+      var out = sheets[curSheet];
+      out.classList.add('is-under');
+      out.classList.remove('is-on');
+      sheets[n].classList.add('is-on');
+      curSheet = n;
+
+      tabs.forEach(function (t, i) {
+        t.setAttribute('aria-pressed', i === n ? 'true' : 'false');
+      });
+
+      clearTimeout(deckTimer);
+      deckTimer = setTimeout(function () {
+        sheets.forEach(function (s, i) { if (i !== curSheet) s.classList.remove('is-under'); });
+      }, FADE);
+    }
+
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        showSheet(Number(t.getAttribute('data-go')));
+      });
+    });
+
+    // 키보드로도 넘어간다
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') showSheet(curSheet + 1);
+      else if (e.key === 'ArrowLeft') showSheet(curSheet - 1);
+    });
   }
 
   /* ── 가로 슬라이드 (상세 1) ── */
