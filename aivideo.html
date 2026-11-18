@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>telephonium — 천우태 포트폴리오</title>
+<meta name="description" content="telephonium — 22,026년 전자 화석 전시 프로젝트">
+<meta name="theme-color" content="#006198">
+<meta property="og:title" content="telephonium — 천우태">
+<meta property="og:description" content="22,026년 전자 화석 전시 프로젝트">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="detail stack">
+
+<a class="btn back" href="index.html" data-transition aria-label="홈으로 돌아가기">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M19 12H5M11 18l-6-6 6-6"/>
+  </svg>
+  HOME
+</a>
+
+<main class="sheet">
+
+  <img src="assets/img/t-01.webp" width="1920" height="1080" alt="telephonium 표지">
+
+  <!-- 2장 — 썸네일 자리를 눌러 영상을 튼다 -->
+  <div class="shot" id="shot">
+    <img src="assets/img/t-02.webp" width="1920" height="1080"
+         alt="22,026년, IEFI(International Electronic Fossil Institute)">
+
+    <!-- preload=none — 누르기 전에는 영상을 내려받지 않는다 -->
+    <video class="shot__film" id="film"
+           src="assets/video/telephonium.mp4?v=2"
+           width="1920" height="1080"
+           preload="none" playsinline controls controlslist="nodownload"
+           aria-label="telephonium 영상"></video>
+
+    <button class="shot__play" id="filmPlay" type="button" aria-label="영상 재생">
+      <span class="shot__badge">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+    </button>
+  </div>
+
+  <img src="assets/img/t-03.webp" width="1920" height="1080" alt="문제 제기 및 솔루션">
+  <img src="assets/img/t-04.webp" width="1920" height="1080" alt="회수율이 아닌, 인지방식을 풀어야 한다">
+  <img src="assets/img/t-05.webp" width="1920" height="1080" alt="우리를 어떤 시선으로 바라볼까?">
+
+</main>
+
+<div class="fade-layer"></div>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
