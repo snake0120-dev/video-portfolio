@@ -446,15 +446,37 @@
       if (p && typeof p.catch === 'function') { p.catch(function () {}); }
     };
 
+    // 버튼은 '지금 어떤 상태인지'를 말한다 — 소리가 나면 SOUND ON, 꺼져 있으면 SOUND OFF
     function paintSound() {
       if (!soundBtn) return;
-      soundBtn.textContent = reel.muted ? 'SOUND ON' : 'SOUND OFF';
+      soundBtn.textContent = reel.muted ? 'SOUND OFF' : 'SOUND ON';
       soundBtn.setAttribute('aria-pressed', reel.muted ? 'false' : 'true');
+      soundBtn.setAttribute('aria-label', reel.muted ? '소리 켜기' : '소리 끄기');
     }
 
-    // 소리를 켠 채 자동재생을 먼저 시도하고, 브라우저가 막으면 음소거로 되돌린다.
-    // (대부분의 브라우저는 사용자 조작 없이 소리 있는 자동재생을 막는다 —
-    //  그 경우 아래 SOUND ON 버튼을 한 번 누르면 켜진다)
+    // 기본값은 '소리 켜짐'이다. 다만 브라우저는 사용자가 아무것도 누르지 않은 상태에서
+    // 소리 있는 자동재생을 막는다. 그래서 막히면 일단 음소거로 돌려 영상은 이어가고,
+    // 화면을 처음 건드리는 순간 소리를 켠다. (직접 끈 뒤에는 다시 켜지 않는다)
+    var wantSound = true;
+
+    function onGesture(e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('#sound')) return;   // 사운드 버튼은 스스로 처리한다
+      disarmUnmute();
+      if (!wantSound) return;
+      reel.muted = false;
+      if (reel.paused) kick();
+      paintSound();
+    }
+    function armUnmute() {
+      document.addEventListener('pointerdown', onGesture, true);
+      document.addEventListener('keydown', onGesture, true);
+    }
+    function disarmUnmute() {
+      document.removeEventListener('pointerdown', onGesture, true);
+      document.removeEventListener('keydown', onGesture, true);
+    }
+
     function start() {
       reel.muted = false;
       var p = reel.play();
@@ -463,6 +485,7 @@
           reel.muted = true;
           paintSound();
           kick();
+          armUnmute();
         });
       }
       paintSound();
@@ -472,7 +495,9 @@
 
     if (soundBtn) {
       soundBtn.addEventListener('click', function () {
+        disarmUnmute();
         reel.muted = !reel.muted;
+        wantSound = !reel.muted;
         if (!reel.muted && reel.paused) kick();
         paintSound();
       });

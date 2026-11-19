@@ -275,7 +275,9 @@ body.home {
 #item-motion .item__title  { left: 540px; top: 408px; letter-spacing: 0.231px; }
 #item-motion .item__sub    { left: 545px; top: 512px; }
 
-/* AI VIDEO — 아이콘 없이 글자만 */
+/* AI VIDEO */
+#item-aivideo .item__icon  { left: 1175.2px; top: 565px; width: 153.6px; height: 107.2px;
+                             transform: rotate(34.25deg); }
 #item-aivideo .item__title { left: 752px; top: 617px; letter-spacing: 0.429px; }
 #item-aivideo .item__sub   { left: 757px; top: 721px; }
 
@@ -297,6 +299,7 @@ body.home {
 .item.is-active .item__title { transform: translateX(10px); }
 #item-naver.is-active   .item__icon { transform: translateY(-8px) scale(1.045) rotate(23.5deg); }
 #item-motion.is-active  .item__icon { transform: translateY(-8px) scale(1.045) rotate(-9.7deg); }
+#item-aivideo.is-active .item__icon { transform: translateY(-8px) scale(1.045) rotate(34.25deg); }
 #item-youtube.is-active .item__icon { transform: translateY(-8px) scale(1.045) rotate(23.45deg); }
 
 .item:focus-visible {
